@@ -1,36 +1,27 @@
 package opendota;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-    
-public class Main {
 
+public class Main {
     public static void main(String[] args) throws Exception {
-        HttpServer server = HttpServer.create(new InetSocketAddress(Integer.valueOf(args.length > 0 ? args[0] : "5600")), 0);
-        server.createContext("/", new MyHandler());
-        server.setExecutor(java.util.concurrent.Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
-        server.start();
-    }
-    
-    static class MyHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange t) throws IOException {
-            t.sendResponseHeaders(200, 0);
-            InputStream is = t.getRequestBody();
-            OutputStream os = t.getResponseBody();
+        if (args.length == 0 || args[0].isEmpty()) {
+            System.err.println("No filepath specified!");
+            return;
+        }
+        
+        String filepath = args[0];
+        
+        File file = new File(filepath);
+        if (file.exists()) {
+            FileInputStream is = new FileInputStream(file);
+            OutputStream os = System.out;
             try {
-            	new Parse(is, os);
+                new Parse(is, os);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            catch (Exception e)
-            {
-            	e.printStackTrace();
-            }
-            os.close();
         }
     }
 }
