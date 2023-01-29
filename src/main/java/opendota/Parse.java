@@ -80,6 +80,8 @@ public class Parse {
 		public Integer x;
 		public Integer y;
 		public Integer z;
+        public Float vecX;
+        public Float vecY;
 		public Float stuns;
 		public Integer hero_id;
 		public transient List<Item> hero_inventory;
@@ -678,6 +680,8 @@ public class Parse {
                         //System.err.println(e);
                         entry.x = getEntityProperty(e, "CBodyComponent.m_cellX", null);
                         entry.y = getEntityProperty(e, "CBodyComponent.m_cellY", null);
+                        entry.vecX = getEntityProperty(e, "CBodyComponent.m_vecX", null);
+                        entry.vecY = getEntityProperty(e, "CBodyComponent.m_vecY", null);
                         //System.err.format("%s, %s\n", entry.x, entry.y);
                         //get the hero's entity name, ex: CDOTA_Hero_Zuus
                         entry.unit = e.getDtClass().getDtName();
