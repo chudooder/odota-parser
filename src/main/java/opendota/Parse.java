@@ -809,11 +809,15 @@ public class Parse {
         Integer x = getEntityProperty(e, "CBodyComponent.m_cellX", null); 
         Integer y = getEntityProperty(e, "CBodyComponent.m_cellY", null); 
         Integer z = getEntityProperty(e, "CBodyComponent.m_cellZ", null); 
+        Float vecX = getEntityProperty(e, "CBodyComponent.m_vecX", null);
+        Float vecY = getEntityProperty(e, "CBodyComponent.m_vecY", null);
         Integer life_state = getEntityProperty(e, "m_lifeState", null); 
         Integer[] pos = {x, y}; 
         entry.x = x; 
         entry.y = y; 
         entry.z = z; 
+        entry.vecX = vecX;
+        entry.vecY = vecY;
         entry.type = isObserver ? "obs" : "sen"; 
         entry.entityleft = life_state == 1; 
         entry.key = Arrays.toString(pos); 
