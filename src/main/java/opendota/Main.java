@@ -18,9 +18,14 @@ public class Main {
             FileInputStream is = new FileInputStream(file);
             OutputStream os = System.out;
             try {
-                new Parse(is, os);
-            } catch (Exception e) {
-                e.printStackTrace();
+		if (args.length >=2){
+			is.close();
+			new Parse(filepath,os,true);
+		}else{
+			new Parse(is, os);
+		}
+	    } catch (Exception e) {
+		e.printStackTrace();
             }
         }
     }

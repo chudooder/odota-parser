@@ -6,6 +6,7 @@ import skadistats.clarity.io.Util;
 import skadistats.clarity.model.Entity;
 import skadistats.clarity.model.FieldPath;
 import skadistats.clarity.model.StringTable;
+skadistats.clarity.Clarity;
 import skadistats.clarity.processor.entities.Entities;
 import skadistats.clarity.processor.entities.OnEntityEntered;
 import skadistats.clarity.processor.entities.OnEntityLeft;
@@ -201,6 +202,24 @@ public class Parse {
       long tMatch = System.currentTimeMillis() - tStart;
       System.err.format("total time taken: %s\n", (tMatch) / 1000.0);
     }
+
+    public Parse(String input, OutputStream output, boolean quick) throws IOException, InterruptedException
+    {
+      greevilsGreedVisitor = new GreevilsGreedVisitor(name_to_slot);
+      trackVisitor = new TrackVisitor();
+
+      isPlayerStartingItemsWritten = new ArrayList<>(Arrays.asList(new Boolean[numPlayers]));
+      Collections.fill(isPlayerStartingItemsWritten, Boolean.FALSE);
+      os = output;
+      long tStart = System.currentTimeMillis();
+
+      CDemoFileInfo info = Clarity.infoForFile(input);
+      System.out.println(info);
+
+      long tMatch = System.currentTimeMillis() - tStart;
+      System.err.format("total time taken: %s\n", (tMatch) / 1000.0);
+    }
+
     
     public void output(Entry e) {
         try {
