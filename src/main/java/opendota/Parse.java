@@ -6,7 +6,7 @@ import skadistats.clarity.io.Util;
 import skadistats.clarity.model.Entity;
 import skadistats.clarity.model.FieldPath;
 import skadistats.clarity.model.StringTable;
-skadistats.clarity.Clarity;
+import skadistats.clarity.Clarity;
 import skadistats.clarity.processor.entities.Entities;
 import skadistats.clarity.processor.entities.OnEntityEntered;
 import skadistats.clarity.processor.entities.OnEntityLeft;
