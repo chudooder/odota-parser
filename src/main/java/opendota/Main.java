@@ -15,12 +15,16 @@ public class Main {
         
         File file = new File(filepath);
         if (file.exists()) {
-            FileInputStream is = new FileInputStream(file);
+            
             OutputStream os = System.out;
             try {
-                new Parse(is, os);
-            } catch (Exception e) {
-                e.printStackTrace();
+		if (args.length >=2){
+			new Parse(file,os,true);
+		} else {
+			new Parse(file,os,false);
+		}
+	    } catch (Exception e) {
+		e.printStackTrace();
             }
         }
     }

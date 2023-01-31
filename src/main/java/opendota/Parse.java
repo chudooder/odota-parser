@@ -6,6 +6,7 @@ import skadistats.clarity.io.Util;
 import skadistats.clarity.model.Entity;
 import skadistats.clarity.model.FieldPath;
 import skadistats.clarity.model.StringTable;
+import skadistats.clarity.Clarity;
 import skadistats.clarity.processor.entities.Entities;
 import skadistats.clarity.processor.entities.OnEntityEntered;
 import skadistats.clarity.processor.entities.OnEntityLeft;
@@ -34,7 +35,9 @@ import skadistats.clarity.wire.s2.proto.S2DotaGcCommon.CMsgDOTAMatch;
 import java.util.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.io.File;
 
 import opendota.combatlogvisitors.TrackVisitor;
 import opendota.combatlogvisitors.GreevilsGreedVisitor;
@@ -187,20 +190,32 @@ public class Parse {
 
     boolean isDotaPlusProcessed = false;
 
-    public Parse(InputStream input, OutputStream output) throws IOException
+    public Parse(File input, OutputStream output, boolean quick) throws IOException, InterruptedException
     {
-      greevilsGreedVisitor = new GreevilsGreedVisitor(name_to_slot);
-      trackVisitor = new TrackVisitor();
-    	
-      is = input;
-      os = output;
-      isPlayerStartingItemsWritten = new ArrayList<>(Arrays.asList(new Boolean[numPlayers]));
-      Collections.fill(isPlayerStartingItemsWritten, Boolean.FALSE);
+
       long tStart = System.currentTimeMillis();
-      new SimpleRunner(new InputStreamSource(is)).runWith(this);
+
+      if (quick){
+	      CDemoFileInfo info = Clarity.infoForFile(input.getPath());
+              
+	      System.out.println(info.getGameInfo());
+      } else {
+
+	      greevilsGreedVisitor = new GreevilsGreedVisitor(name_to_slot);
+	      trackVisitor = new TrackVisitor();
+
+	      isPlayerStartingItemsWritten = new ArrayList<>(Arrays.asList(new Boolean[numPlayers]));
+	      Collections.fill(isPlayerStartingItemsWritten, Boolean.FALSE);
+	      is = new FileInputStream(input);
+	      os = output;
+	      new SimpleRunner(new InputStreamSource(is)).runWith(this);
+
+      }
+
       long tMatch = System.currentTimeMillis() - tStart;
       System.err.format("total time taken: %s\n", (tMatch) / 1000.0);
     }
+
     
     public void output(Entry e) {
         try {
