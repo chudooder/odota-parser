@@ -408,6 +408,13 @@ public class Parse {
         Entity dData = ctx.getProcessor(Entities.class).getByDtName("CDOTA_DataDire");
         Entity rData = ctx.getProcessor(Entities.class).getByDtName("CDOTA_DataRadiant");
 
+        // Creeps
+        Iterator<Entity> creeps = ctx.getProcessor(Entities.class).getAllByDtName("CDOTA_BaseNPC_Creep_Lane");
+        Iterator<Entity> siegeCreeps = ctx.getProcessor(Entities.class).getAllByDtName("CDOTA_BaseNPC_Creep_Siege");
+
+        // Determine if we should output interval entries for this tick.
+        boolean doInterval = time > nextInterval;
+
         // Create draftStage variable
         Integer draftStage = getEntityProperty(grp, "m_pGameRules.m_nGameState", null);
 
@@ -529,7 +536,7 @@ public class Parse {
                 init = true;
             }
 
-            if (!postGame && time >= nextInterval)
+            if (!postGame && doInterval)
             {
                 //System.err.println(pr);
                 for (int i = 0; i < numPlayers; i++) 
@@ -656,7 +663,6 @@ public class Parse {
                     }
                     output(entry);
                 }
-                nextInterval += INTERVAL;
             }
 
             // When the game is over, get dota plus levels
@@ -669,6 +675,59 @@ public class Parse {
                 }
                 isDotaPlusProcessed = true;
             }
+        }
+        if (creeps != null && !postGame && doInterval) {
+            while (creeps.hasNext()) {
+                Entity e = creeps.next();
+                if (e == null) {
+                    break;
+                }
+                boolean isWaitingToSpawn = getEntityProperty(e, "m_bIsWaitingToSpawn", null);
+                if (isWaitingToSpawn) {
+                    continue;
+                }
+                int unitNameIndex = getEntityProperty(e, "m_iUnitNameIndex", null);
+                int team = getEntityProperty(e, "m_iTeamNum", null);
+                Entry entry = new Entry(time);
+                entry.type = "creep_interval";
+                entry.unit = unitNameIndex + "";
+                entry.team = team;
+                entry.x = getEntityProperty(e, "CBodyComponent.m_cellX", null);
+                entry.y = getEntityProperty(e, "CBodyComponent.m_cellY", null);
+                entry.z = getEntityProperty(e, "CBodyComponent.m_cellZ", null);
+                entry.vecX = getEntityProperty(e, "CBodyComponent.m_vecX", null);
+                entry.vecY = getEntityProperty(e, "CBodyComponent.m_vecY", null);
+                output(entry);
+            }
+        }
+
+        if (siegeCreeps != null && !postGame && doInterval) {
+            while (siegeCreeps.hasNext()) {
+                Entity e = siegeCreeps.next();
+                if (e == null) {
+                    break;
+                }
+                boolean isWaitingToSpawn = getEntityProperty(e, "m_bIsWaitingToSpawn", null);
+                if (isWaitingToSpawn) {
+                    continue;
+                }
+                int unitNameIndex = getEntityProperty(e, "m_iUnitNameIndex", null);
+                int team = getEntityProperty(e, "m_iTeamNum", null);
+                Entry entry = new Entry(time);
+                entry.type = "creep_interval";
+                entry.unit = unitNameIndex + "-siege";
+                entry.team = team;
+                entry.x = getEntityProperty(e, "CBodyComponent.m_cellX", null);
+                entry.y = getEntityProperty(e, "CBodyComponent.m_cellY", null);
+                entry.z = getEntityProperty(e, "CBodyComponent.m_cellZ", null);
+                entry.vecX = getEntityProperty(e, "CBodyComponent.m_vecX", null);
+                entry.vecY = getEntityProperty(e, "CBodyComponent.m_vecY", null);
+                output(entry);
+            }
+        }
+
+        if (doInterval) {
+            nextInterval += INTERVAL;
         }
     }
 
